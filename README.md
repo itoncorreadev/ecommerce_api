@@ -126,9 +126,12 @@ docker compose run --rm web rails db:seed
 ```
 
 ## ⚡Background Jobs
-- Subir Sidekiq: docker compose up -d sidekiq
+- Subir Sidekiq:
+```bash
+docker compose up -d sidekiq
+```
 - UI: http://localhost:3000/sidekiq
-- Agendamentos: `config/schedule.yml (marcar carrinhos como abandonados após 3h e remover após 7 dias).
+- Agendamentos: config/schedule.yml (marcar carrinhos como abandonados após 3h e remover após 7 dias).
 
 ## 🛠 Configuração
 - Variáveis via `.env` (carregadas pelo Compose):
