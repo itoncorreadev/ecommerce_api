@@ -44,7 +44,11 @@ API em Ruby on Rails para gerenciamento de carrinho de compras, com documentaç�
 ```bash
 docker compose up -d db redis
 ```
-- Checar status/logs: `docker compose ps` e `docker compose logs -f db`
+- Checar status/logs:
+```bash
+docker compose ps
+docker compose logs -f db
+```
 
 3️⃣ Preparar banco (primeira execução)
 ```bash
@@ -57,8 +61,8 @@ docker compose run --rm web rails db:seed
 
 4️⃣ Subir aplicação e workers
 ```bash
-docker compose up -d web` (sobe db e redis)
-docker compose up -d sidekiq` (opcional, para jobs)
+docker compose up -d web (sobe db e redis)
+docker compose up -d sidekiq (opcional, para jobs)
 ```
 
 5️⃣ Acessos:
