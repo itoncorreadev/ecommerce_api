@@ -1,0 +1,17 @@
+:concurrency: 3
+:timeout: 60
+:verbose: true
+:queues:
+  - critical
+  - cart_maintenance
+  - default
+  - mailers
+  - active_storage_analysis
+  - active_storage_purge
+
+# Config do Sidekiq Scheduler
+:scheduler:
+  :enabled: true
+  :dynamic: true
+  :dynamic_every: "5s"
+  :listened_queues_only: false

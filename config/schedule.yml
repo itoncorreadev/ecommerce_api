@@ -1,0 +1,9 @@
+# Configuração do Sidekiq Scheduler para jobs recorrentes
+
+# Job para marcar carrinhos como abandonados após 3 horas de inatividade
+# e remover carrinhos abandonados há mais de 7 dias
+mark_abandoned_carts:
+  every: '1h'  # Executa a cada 1 hora
+  class: MarkCartAsAbandonedJob
+  description: "Marks carts as abandoned after 3 hours and removes carts that have been abandoned for more than 7 days"
+  queue: cart_maintenance

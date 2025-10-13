@@ -1,0 +1,51 @@
+plugins:
+  - rubocop-rails
+  - rubocop-rspec
+
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 3.3
+  SuggestExtensions: false
+
+# Documentation comments are not required in this project
+
+Metrics/BlockLength:
+  Enabled: true
+  Exclude:
+    - 'spec/**/*'
+    - 'db/migrate/**/*'
+    - 'Guardfile'
+
+# Relax strict RSpec cops for this project
+RSpec/MultipleExpectations:
+  Enabled: false
+RSpec/ExampleLength:
+  Enabled: false
+RSpec/DescribedClass:
+  Enabled: false
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+RSpec/RepeatedExampleGroupDescription:
+  Enabled: false
+
+# Avoid documentation comments requirement in tests
+Style/Documentation:
+  Enabled: false
+
+Style/OptionalBooleanParameter:
+  Enabled: false
+
+Rails/BulkChangeTable:
+  Enabled: false
+
+RSpec/MessageSpies:
+  Enabled: false
+RSpec/NamedSubject:
+  Enabled: false
+RSpec/LetSetup:
+  Enabled: false
+  
+# Ignora RSpec/EmptyExampleGroup apenas para specs de Rswag
+RSpec/EmptyExampleGroup:
+  Exclude:
+    - 'spec/integration/**/*.rb'

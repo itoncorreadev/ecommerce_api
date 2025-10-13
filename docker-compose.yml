@@ -1,0 +1,68 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - '${DB_PORT}:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  redis:
+    image: redis:7.0.15-alpine
+    ports:
+      - '${REDIS_PORT}:6379'
+    volumes:
+      - redis_data:/data  
+  web:
+    build: .
+    command:
+      - /bin/sh
+      - -c
+      - |
+        ln -snf /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime && echo America/Sao_Paulo > /etc/timezone
+        rm -rf tmp/pids
+        bundle exec rails s -p ${RAILS_PORT} -b ${RAILS_BIND}
+    volumes:
+      - .:/rails
+    ports:
+      - '${WEB_PORT}:3000'
+    depends_on:
+      - db
+      - redis
+    environment:
+      DATABASE_URL: ${DATABASE_URL_DEV}
+      REDIS_URL: ${REDIS_URL}
+      RAILS_ENV: ${RAILS_ENV_DEV}
+  sidekiq:
+    build: .
+    command:
+      - /bin/sh
+      - -c
+      - bundle exec sidekiq
+    volumes:
+      - .:/rails
+    depends_on:
+      - db
+      - redis
+    environment:
+      DATABASE_URL: ${DATABASE_URL_DEV}
+      REDIS_URL: ${REDIS_URL}
+      RAILS_ENV: ${RAILS_ENV_DEV}
+  test:
+    profiles:
+      - test
+    build: .
+    command: bash -c "bundle exec rails db:create db:migrate && bundle exec rspec"
+    volumes:
+      - .:/rails
+    depends_on:
+      - db
+      - redis
+    environment:
+      DATABASE_URL: ${DATABASE_URL_TEST}
+      REDIS_URL: ${REDIS_URL}
+      RAILS_ENV: ${RAILS_ENV_TEST}
+volumes:
+  postgres_data:
+  redis_data:
