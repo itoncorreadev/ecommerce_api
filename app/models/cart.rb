@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Cart < ApplicationRecord
+  include CartTiming
+
   has_many :cart_items, dependent: :destroy
   has_many :products, through: :cart_items
 
@@ -12,17 +14,6 @@ class Cart < ApplicationRecord
 
   scope :abandoned, -> { where.not(abandoned_at: nil) }
   scope :not_abandoned, -> { where(abandoned_at: nil) }
-  scope :inactive_for, lambda { |value|
-    threshold =
-      if value.is_a?(ActiveSupport::Duration)
-        Time.current - value
-      elsif value.respond_to?(:to_time)
-        value.to_time
-      else
-        Time.current - value.to_i
-      end
-    where(last_interaction_at: ...threshold)
-  }
 
   def abandoned?
     abandoned_at.present?
@@ -64,13 +55,5 @@ class Cart < ApplicationRecord
 
   def set_default_total_price
     self.total_price ||= 0.0
-  end
-
-  def should_be_abandoned?
-    !abandoned? && last_interaction_at < 3.hours.ago
-  end
-
-  def abandoned_for_too_long?
-    last_interaction_at < 7.days.ago
   end
 end

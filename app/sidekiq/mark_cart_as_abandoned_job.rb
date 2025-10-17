@@ -12,10 +12,10 @@ class MarkCartAsAbandonedJob
       cart&.mark_as_abandoned
     else
       # Mark all inactive carts as abandoned (run periodically)
-      Cart.inactive_for(3.hours).not_abandoned.find_each(&:mark_as_abandoned)
+      Cart.inactive_for(CartTiming::ABANDONMENT_THRESHOLD).not_abandoned.find_each(&:mark_as_abandoned)
 
-      # Remove carts that have been abandoned for too long (e.g., 7 days)
-      Cart.abandoned.where(abandoned_at: ...7.days.ago).find_each(&:remove_if_abandoned)
+      # Remove carts that have been abandoned for too long
+      Cart.abandoned.where(abandoned_at: ...CartTiming::REMOVAL_THRESHOLD.ago).find_each(&:remove_if_abandoned)
     end
   end
 end
