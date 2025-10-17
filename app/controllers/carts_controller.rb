@@ -13,8 +13,8 @@ class CartsController < ApplicationController
   # POST /cart
   def create
     if @product.present?
-      quantity = params[:quantity].to_i
-      return render_quantity_error unless quantity.positive?
+      quantity = validate_positive_quantity
+      return unless quantity
 
       @cart.add_product(@product, quantity)
     end
@@ -24,8 +24,8 @@ class CartsController < ApplicationController
 
   # POST /cart/add_item
   def add_item
-    quantity = params[:quantity].to_i
-    return render_quantity_error unless quantity.positive?
+    quantity = validate_positive_quantity
+    return unless quantity
 
     add_item_and_render(quantity)
   end
@@ -35,7 +35,7 @@ class CartsController < ApplicationController
     if @cart.remove_product(@product)
       render json: @cart, serializer: CartSerializer, status: :ok
     else
-      render json: { errors: @cart.errors.full_messages }, status: :unprocessable_entity
+      render_validation_errors(@cart)
     end
   end
 
@@ -53,25 +53,16 @@ class CartsController < ApplicationController
     @product = Product.find_by(id: params[:product_id])
     return if @product.present?
 
-    render json: { error: 'Product not found' }, status: :not_found
+    render_not_found_error('Product not found')
   end
 
   def cart_summary; end
-
-  def render_quantity_error
-    @cart ||= CartService.find_or_create_cart(
-      session_cart_id: session[:cart_id],
-      product_id: params[:product_id]
-    )
-    @cart.errors.add(:quantity, 'must be greater than 0')
-    render json: { errors: @cart.errors.full_messages }, status: :unprocessable_entity
-  end
 
   def add_item_and_render(quantity)
     if @cart.add_product(@product, quantity)
       render json: @cart, serializer: CartSerializer, status: :ok
     else
-      render json: { errors: @cart.errors.full_messages }, status: :unprocessable_entity
+      render_validation_errors(@cart)
     end
   end
 end
