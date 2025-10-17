@@ -6,9 +6,8 @@ Rails.application.routes.draw do
   mount Rswag::Ui::Engine => '/api-docs'
   mount Rswag::Api::Engine => '/api-docs'
   mount Sidekiq::Web => '/sidekiq'
-  resources :products
 
-  # Cart routes (singular)
+  resources :products
   resource :cart, controller: 'carts', only: %i[show create]
   delete 'cart/:product_id', to: 'carts#remove_item'
   post 'cart/add_item', to: 'carts#add_item'
